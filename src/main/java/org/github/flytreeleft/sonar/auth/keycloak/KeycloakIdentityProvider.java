@@ -19,6 +19,12 @@
  */
 package org.github.flytreeleft.sonar.auth.keycloak;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.keycloak.OAuth2Constants;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
@@ -32,10 +38,6 @@ import org.sonar.api.server.ServerSide;
 import org.sonar.api.server.authentication.Display;
 import org.sonar.api.server.authentication.OAuth2IdentityProvider;
 import org.sonar.api.server.authentication.UserIdentity;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.UUID;
 
 @ServerSide
 public class KeycloakIdentityProvider implements OAuth2IdentityProvider {
@@ -81,6 +83,11 @@ public class KeycloakIdentityProvider implements OAuth2IdentityProvider {
     public void init(InitContext context) {
         String redirect = context.getCallbackUrl();
         String state = UUID.randomUUID().toString();
+
+        System.out.println("getKeycloakDeployment() : " + getKeycloakDeployment().toString());
+        System.out.println("getAuthUrl() : " + getKeycloakDeployment().getAuthUrl());
+        System.out.println("getResourceName() : " + getKeycloakDeployment().getResourceName());
+
         String authUrl = getKeycloakDeployment().getAuthUrl()
                                                 .clone()
                                                 .queryParam(OAuth2Constants.CLIENT_ID,
@@ -88,6 +95,7 @@ public class KeycloakIdentityProvider implements OAuth2IdentityProvider {
                                                 .queryParam(OAuth2Constants.REDIRECT_URI, redirect)
                                                 .queryParam(OAuth2Constants.STATE, state)
                                                 .queryParam(OAuth2Constants.RESPONSE_TYPE, OAuth2Constants.CODE)
+                                                .queryParam(OAuth2Constants.SCOPE, "openid") // https://www.keycloak.org/docs/latest/upgrading/index.html#id-token-requires-scope-openid
                                                 .build()
                                                 .toString();
         context.redirectTo(authUrl);
@@ -127,6 +135,7 @@ public class KeycloakIdentityProvider implements OAuth2IdentityProvider {
     private synchronized KeycloakDeployment getKeycloakDeployment() {
         if (this.keycloakDeployment == null || this.keycloakDeployment.getClient() == null) {
             try {
+            	System.out.println("keycloakjson : ["+this.settings.keycloakJson()+"]");
                 AdapterConfig adapterConfig = JsonSerialization.readValue(this.settings.keycloakJson(),
                                                                           AdapterConfig.class);
                 this.keycloakDeployment = KeycloakDeploymentBuilder.build(adapterConfig);
