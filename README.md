@@ -15,7 +15,7 @@ It works with SonarQube 5.x and Keycloak 3.x
 #### 1. Build the plugin
 Build and install the into your local maven repository using the following commands:
 ```
-git clone https://github.com/flytreeleft/sonar-auth-keycloak-plugin.git
+git clone https://github.com/ian0422my/sonar-auth-keycloak-plugin.git
 cd sonar-auth-keycloak-plugin
 mvn clean install
 ```
@@ -116,14 +116,3 @@ you will see `sonar-dev` and `sonar-test` are assigned to `lily`.
 
 ![](./docs/images/sonar-user-groups-from-keycloak.png)
 
-## Todos
-* Add unit tests
-
-## Contributing
-[![GitHub contributors](https://img.shields.io/github/contributors/flytreeleft/sonar-auth-keycloak-plugin.svg)](https://github.com/flytreeleft/sonar-auth-keycloak-plugin/graphs/contributors)
-
-Thanks to all contributors who helped to get this up and running.
-
-## Thanks
-* [GitHub Authentication for SonarQube](https://github.com/SonarSource/sonar-auth-github)
-* [Keycloak Plugin for Jenkins](https://github.com/jenkinsci/keycloak-plugin)
